@@ -1,0 +1,6 @@
+@CvForgeAI.API_HostAddress = http://localhost:5172
+
+GET {{CvForgeAI.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

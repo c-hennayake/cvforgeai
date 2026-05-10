@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="CvForgeAI.API/CvForgeAI.API.csproj" />
+  <Project Path="CvForgeAI.Application/CvForgeAI.Application.csproj" />
+  <Project Path="CvForgeAI.Domain/CvForgeAI.Domain.csproj" />
+  <Project Path="CvForgeAI.Infrastructure/CvForgeAI.Infrastructure.csproj" />
+</Solution>
