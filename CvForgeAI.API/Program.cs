@@ -1,4 +1,5 @@
 using CvForgeAI.Application.Services.Auth;
+using CvForgeAI.Application.Services.Resume;
 using CvForgeAI.Infrastructure.Persistence;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,6 +11,9 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+
+builder.Services.AddScoped<IResumeService, ResumeService>();
+
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
