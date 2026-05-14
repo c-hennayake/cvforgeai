@@ -1,109 +1,66 @@
-﻿using BCrypt.Net;
-
-using CvForgeAI.Application.DTO.Auth;
-using CvForgeAI.Domain.Entities;
-using CvForgeAI.Infrastructure.Persistence;
-
+﻿using CvForgeAI.Application.DTO.Auth;
+using CvForgeAI.Application.Services.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 
-namespace CVForgeAI.Application.DTO.Auth;
-
+namespace CvForgeAI.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly AppDbContext _context;
+    private readonly IAuthService _authService;
 
-    private readonly IConfiguration _configuration;
-
-    public AuthController(
-        AppDbContext context,
-        IConfiguration configuration)
+    public AuthController(IAuthService authService)
     {
-        _context = context;
-
-        _configuration = configuration;
+        _authService = authService;
     }
 
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterRequest request)
     {
-        var existingUser = await _context.Users
-            .FirstOrDefaultAsync(x => x.Email == request.Email);
+        var response = await _authService.RegisterAsync(request);
 
-        if (existingUser is not null)
+        if (!response.Success)
         {
-            return BadRequest("Email already exists.");
+            return BadRequest(response);
         }
 
-        var user = new User
-        {
-            FullName = request.FullName,
-            Email = request.Email,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password)
-        };
-
-        _context.Users.Add(user);
-
-        await _context.SaveChangesAsync();
-
-        return Ok("User registered successfully.");
+        return Ok(response);
     }
 
-
-
     [HttpPost("login")]
-    public async Task<IActionResult>Login(LoginRequest request)
+    public async Task<IActionResult> Login(LoginRequest request)
     {
-        var user = await _context.Users
-            .FirstOrDefaultAsync(x => x.Email == request.Email);
+        var response = await _authService.LoginAsync(request);
 
-        if (user is null)
+        if (!response.Success)
         {
-            return Unauthorized("Invalid email or password.");
+            return Unauthorized(response);
         }
 
-        var passwordValid = BCrypt.Net.BCrypt.Verify(
-            request.Password,
-            user.PasswordHash);
+        return Ok(response);
+    }
 
-        if (!passwordValid)
-        {
-            return Unauthorized("Invalid email or password.");
-        }
+    [Authorize]
+    [HttpGet("me")]
+    public IActionResult Me()
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        var claims = new[]
-        {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, user.Role)
-        };
+        var fullName = User.FindFirst(ClaimTypes.Name)?.Value;
 
-        var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
+        var email = User.FindFirst(ClaimTypes.Email)?.Value;
 
-        var creds = new SigningCredentials(
-            key,
-            SecurityAlgorithms.HmacSha256);
-
-        var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
-            claims: claims,
-            expires: DateTime.UtcNow.AddHours(1),
-            signingCredentials: creds);
-
-        var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+        var role = User.FindFirst(ClaimTypes.Role)?.Value;
 
         return Ok(new
         {
-            token = jwt
+            UserId = userId,
+            FullName = fullName,
+            Email = email,
+            Role = role
         });
     }
 }
