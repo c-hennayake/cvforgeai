@@ -1,4 +1,5 @@
-﻿using CvForgeAI.Domain.Entities;
+﻿
+using CvForgeAI.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,12 +16,12 @@ namespace CvForgeAI.Infrastructure.Persistence
 
         public DbSet<User> Users => Set<User>();
 
-        public DbSet<CV> CVs => Set<CV>();
+    
 
         public DbSet<Experience> Experiences => Set<Experience>();
         public DbSet<Resume> Resumes => Set<Resume>();
 
-
+       
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

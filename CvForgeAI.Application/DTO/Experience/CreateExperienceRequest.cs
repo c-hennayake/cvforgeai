@@ -1,9 +1,7 @@
-﻿namespace CvForgeAI.Domain.Entities;
+﻿namespace CvForgeAI.Application.DTO.Experience;
 
-public class Experience
+public class CreateExperienceRequest
 {
-    public int Id { get; set; }
-
     public string CompanyName { get; set; } = string.Empty;
 
     public string Position { get; set; } = string.Empty;
@@ -17,6 +15,4 @@ public class Experience
     public bool IsCurrentJob { get; set; }
 
     public int ResumeId { get; set; }
-
-    public Resume Resume { get; set; } = null!;
 }

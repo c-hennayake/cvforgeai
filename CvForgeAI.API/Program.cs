@@ -1,4 +1,5 @@
 using CvForgeAI.Application.Services.Auth;
+using CvForgeAI.Application.Services.Experience;
 using CvForgeAI.Application.Services.Resume;
 using CvForgeAI.Infrastructure.Persistence;
 
@@ -13,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<IResumeService, ResumeService>();
-
+builder.Services.AddScoped<IExperienceService, ExperienceService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(

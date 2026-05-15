@@ -22,51 +22,17 @@ namespace CvForgeAI.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("CvForgeAI.Domain.Entities.CV", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Summary")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdatedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("CVs");
-                });
-
             modelBuilder.Entity("CvForgeAI.Domain.Entities.Experience", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("CVId")
-                        .HasColumnType("uniqueidentifier");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CompanyName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -75,19 +41,22 @@ namespace CvForgeAI.Infrastructure.Migrations
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsCurrentJob")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Position")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("ResumeId")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime?>("UpdatedAtUtc")
+                    b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CVId");
+                    b.HasIndex("ResumeId");
 
                     b.ToTable("Experiences");
                 });
@@ -157,26 +126,15 @@ namespace CvForgeAI.Infrastructure.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("CvForgeAI.Domain.Entities.CV", b =>
-                {
-                    b.HasOne("CvForgeAI.Domain.Entities.User", "User")
-                        .WithMany("CVs")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("CvForgeAI.Domain.Entities.Experience", b =>
                 {
-                    b.HasOne("CvForgeAI.Domain.Entities.CV", "CV")
+                    b.HasOne("CvForgeAI.Domain.Entities.Resume", "Resume")
                         .WithMany("Experiences")
-                        .HasForeignKey("CVId")
+                        .HasForeignKey("ResumeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CV");
+                    b.Navigation("Resume");
                 });
 
             modelBuilder.Entity("CvForgeAI.Domain.Entities.Resume", b =>
@@ -190,15 +148,13 @@ namespace CvForgeAI.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("CvForgeAI.Domain.Entities.CV", b =>
+            modelBuilder.Entity("CvForgeAI.Domain.Entities.Resume", b =>
                 {
                     b.Navigation("Experiences");
                 });
 
             modelBuilder.Entity("CvForgeAI.Domain.Entities.User", b =>
                 {
-                    b.Navigation("CVs");
-
                     b.Navigation("Resumes");
                 });
 #pragma warning restore 612, 618
