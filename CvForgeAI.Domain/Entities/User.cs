@@ -16,5 +16,6 @@ namespace CvForgeAI.Domain.Entities
         public string Role { get; set; } = "User";
 
         public ICollection<CV> CVs { get; set; } = new List<CV>();
+        public ICollection<Resume> Resumes { get; set; } = new List<Resume>();
     }
 }

@@ -92,6 +92,35 @@ namespace CvForgeAI.Infrastructure.Migrations
                     b.ToTable("Experiences");
                 });
 
+            modelBuilder.Entity("CvForgeAI.Domain.Entities.Resume", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Summary")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Resumes");
+                });
+
             modelBuilder.Entity("CvForgeAI.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -150,6 +179,17 @@ namespace CvForgeAI.Infrastructure.Migrations
                     b.Navigation("CV");
                 });
 
+            modelBuilder.Entity("CvForgeAI.Domain.Entities.Resume", b =>
+                {
+                    b.HasOne("CvForgeAI.Domain.Entities.User", "User")
+                        .WithMany("Resumes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("CvForgeAI.Domain.Entities.CV", b =>
                 {
                     b.Navigation("Experiences");
@@ -158,6 +198,8 @@ namespace CvForgeAI.Infrastructure.Migrations
             modelBuilder.Entity("CvForgeAI.Domain.Entities.User", b =>
                 {
                     b.Navigation("CVs");
+
+                    b.Navigation("Resumes");
                 });
 #pragma warning restore 612, 618
         }
