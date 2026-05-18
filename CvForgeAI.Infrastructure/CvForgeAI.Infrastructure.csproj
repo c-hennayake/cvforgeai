@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CvForgeAI.Application\CvForgeAI.Application.csproj" />
     <ProjectReference Include="..\CvForgeAI.Domain\CvForgeAI.Domain.csproj" />
   </ItemGroup>
 

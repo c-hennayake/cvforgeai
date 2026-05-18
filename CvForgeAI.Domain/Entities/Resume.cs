@@ -16,4 +16,14 @@ public class Resume
 
     public ICollection<Experience> Experiences { get; set; }
         = new List<Experience>();
+
+    public ICollection<Skill> Skills { get; set; }
+    = new List<Skill>();
+
+    public ICollection<Education> Educations { get; set; }
+    = new List<Education>();
+
+    public ICollection<Project> Projects { get; set; }
+    = new List<Project>();
+
 }

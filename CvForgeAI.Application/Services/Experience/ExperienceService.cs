@@ -1,30 +1,31 @@
-﻿using CvForgeAI.Application.DTO.Experience;
-using CvForgeAI.Domain.Entities;
-using CvForgeAI.Infrastructure.Persistence;
-
-using Microsoft.EntityFrameworkCore;
+﻿using CvForgeAI.Application.Abstractions.Repositories;
+using CvForgeAI.Application.DTO.Experience;
 
 namespace CvForgeAI.Application.Services.Experience;
 
 public class ExperienceService : IExperienceService
 {
-    private readonly AppDbContext _context;
+    private readonly IExperienceRepository _experienceRepository;
+    private readonly IResumeRepository _resumeRepository;
 
-    public ExperienceService(AppDbContext context)
+    public ExperienceService(
+        IExperienceRepository experienceRepository,
+        IResumeRepository resumeRepository)
     {
-        _context = context;
+        _experienceRepository = experienceRepository;
+        _resumeRepository = resumeRepository;
     }
 
     public async Task<ExperienceResponse> CreateAsync(
         Guid userId,
         CreateExperienceRequest request)
     {
-        var resume = await _context.Resumes
-            .FirstOrDefaultAsync(x =>
-                x.Id == request.ResumeId &&
-                x.UserId == userId);
+        var resumeExists = await _resumeRepository
+            .ResumeBelongsToUserAsync(
+                request.ResumeId,
+                userId);
 
-        if (resume == null)
+        if (!resumeExists)
         {
             throw new Exception("Resume not found.");
         }
@@ -40,9 +41,9 @@ public class ExperienceService : IExperienceService
             ResumeId = request.ResumeId
         };
 
-        _context.Experiences.Add(experience);
+        await _experienceRepository.AddAsync(experience);
 
-        await _context.SaveChangesAsync();
+        await _experienceRepository.SaveChangesAsync();
 
         return new ExperienceResponse
         {
@@ -61,29 +62,29 @@ public class ExperienceService : IExperienceService
         Guid userId,
         int resumeId)
     {
-        var resumeExists = await _context.Resumes
-            .AnyAsync(x =>
-                x.Id == resumeId &&
-                x.UserId == userId);
+        var resumeExists = await _resumeRepository
+            .ResumeBelongsToUserAsync(
+                resumeId,
+                userId);
 
         if (!resumeExists)
         {
             throw new Exception("Resume not found.");
         }
 
-        return await _context.Experiences
-            .Where(x => x.ResumeId == resumeId)
-            .Select(x => new ExperienceResponse
-            {
-                Id = x.Id,
-                CompanyName = x.CompanyName,
-                Position = x.Position,
-                Description = x.Description,
-                StartDate = x.StartDate,
-                EndDate = x.EndDate,
-                IsCurrentJob = x.IsCurrentJob,
-                ResumeId = x.ResumeId
-            })
-            .ToListAsync();
+        var experiences = await _experienceRepository
+            .GetByResumeIdAsync(resumeId);
+
+        return experiences.Select(x => new ExperienceResponse
+        {
+            Id = x.Id,
+            CompanyName = x.CompanyName,
+            Position = x.Position,
+            Description = x.Description,
+            StartDate = x.StartDate,
+            EndDate = x.EndDate,
+            IsCurrentJob = x.IsCurrentJob,
+            ResumeId = x.ResumeId
+        }).ToList();
     }
 }
