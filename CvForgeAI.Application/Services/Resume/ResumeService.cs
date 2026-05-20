@@ -1,17 +1,16 @@
-﻿using CvForgeAI.Application.DTO.Resume;
-using CvForgeAI.Infrastructure.Persistence;
-
-using Microsoft.EntityFrameworkCore;
+﻿using CvForgeAI.Application.Abstractions.Repositories;
+using CvForgeAI.Application.DTO.Resume;
 
 namespace CvForgeAI.Application.Services.Resume;
 
 public class ResumeService : IResumeService
 {
-    private readonly AppDbContext _context;
+    private readonly IResumeRepository _resumeRepository;
 
-    public ResumeService(AppDbContext context)
+    public ResumeService(
+        IResumeRepository resumeRepository)
     {
-        _context = context;
+        _resumeRepository = resumeRepository;
     }
 
     public async Task<string> CreateAsync(
@@ -25,24 +24,25 @@ public class ResumeService : IResumeService
             UserId = userId
         };
 
-        _context.Resumes.Add(resume);
+        await _resumeRepository.AddAsync(resume);
 
-        await _context.SaveChangesAsync();
+        await _resumeRepository.SaveChangesAsync();
 
         return "Resume created successfully.";
     }
 
-    public async Task<List<ResumeResponse>> GetUserResumesAsync(Guid userId)
+    public async Task<List<ResumeResponse>> GetUserResumesAsync(
+        Guid userId)
     {
-        return await _context.Resumes
-            .Where(x => x.UserId == userId)
-            .Select(x => new ResumeResponse
-            {
-                Id = x.Id,
-                Title = x.Title,
-                Summary = x.Summary,
-                CreatedAt = x.CreatedAt
-            })
-            .ToListAsync();
+        var resumes = await _resumeRepository
+            .GetUserResumesAsync(userId);
+
+        return resumes.Select(x => new ResumeResponse
+        {
+            Id = x.Id,
+            Title = x.Title,
+            Summary = x.Summary,
+            CreatedAt = x.CreatedAt
+        }).ToList();
     }
 }

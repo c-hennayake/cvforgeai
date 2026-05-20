@@ -10,9 +10,20 @@ public class Resume
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    // Foreign Key
     public Guid UserId { get; set; }
 
-    // Navigation Property
     public User User { get; set; } = null!;
+
+    public ICollection<Experience> Experiences { get; set; }
+        = new List<Experience>();
+
+    public ICollection<Skill> Skills { get; set; }
+    = new List<Skill>();
+
+    public ICollection<Education> Educations { get; set; }
+    = new List<Education>();
+
+    public ICollection<Project> Projects { get; set; }
+    = new List<Project>();
+
 }

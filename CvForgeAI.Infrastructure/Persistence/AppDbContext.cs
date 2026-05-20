@@ -1,4 +1,5 @@
-﻿using CvForgeAI.Domain.Entities;
+﻿
+using CvForgeAI.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,12 +15,11 @@ namespace CvForgeAI.Infrastructure.Persistence
         }
 
         public DbSet<User> Users => Set<User>();
-
-        public DbSet<CV> CVs => Set<CV>();
-
+        public DbSet<Education> Educations => Set<Education>();
         public DbSet<Experience> Experiences => Set<Experience>();
         public DbSet<Resume> Resumes => Set<Resume>();
-
+        public DbSet<Project> Projects => Set<Project>();
+        public DbSet<Skill> Skills => Set<Skill>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

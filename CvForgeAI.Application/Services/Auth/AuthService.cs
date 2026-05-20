@@ -1,10 +1,9 @@
 ﻿using BCrypt.Net;
 
+using CvForgeAI.Application.Abstractions.Repositories;
 using CvForgeAI.Application.DTO.Auth;
 using CvForgeAI.Domain.Entities;
-using CvForgeAI.Infrastructure.Persistence;
 
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -16,21 +15,22 @@ namespace CvForgeAI.Application.Services.Auth;
 
 public class AuthService : IAuthService
 {
-    private readonly AppDbContext _context;
+    private readonly IUserRepository _userRepository;
     private readonly IConfiguration _configuration;
 
     public AuthService(
-        AppDbContext context,
+        IUserRepository userRepository,
         IConfiguration configuration)
     {
-        _context = context;
+        _userRepository = userRepository;
         _configuration = configuration;
     }
 
-    public async Task<AuthResponse> RegisterAsync(RegisterRequest request)
+    public async Task<AuthResponse> RegisterAsync(
+        RegisterRequest request)
     {
-        var existingUser = await _context.Users
-            .FirstOrDefaultAsync(x => x.Email == request.Email);
+        var existingUser = await _userRepository
+            .GetByEmailAsync(request.Email);
 
         if (existingUser is not null)
         {
@@ -45,14 +45,14 @@ public class AuthService : IAuthService
         {
             FullName = request.FullName.Trim(),
             Email = request.Email.Trim().ToLower(),
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+            PasswordHash = BCrypt.Net.BCrypt
+                .HashPassword(request.Password),
             Role = "User"
-            
         };
 
-        _context.Users.Add(user);
+        await _userRepository.AddAsync(user);
 
-        await _context.SaveChangesAsync();
+        await _userRepository.SaveChangesAsync();
 
         return new AuthResponse
         {
@@ -61,10 +61,11 @@ public class AuthService : IAuthService
         };
     }
 
-    public async Task<AuthResponse> LoginAsync(LoginRequest request)
+    public async Task<AuthResponse> LoginAsync(
+        LoginRequest request)
     {
-        var user = await _context.Users
-            .FirstOrDefaultAsync(x => x.Email == request.Email);
+        var user = await _userRepository
+            .GetByEmailAsync(request.Email);
 
         if (user is null)
         {
@@ -109,7 +110,8 @@ public class AuthService : IAuthService
         };
 
         var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
+            Encoding.UTF8.GetBytes(
+                _configuration["Jwt:Key"]!));
 
         var creds = new SigningCredentials(
             key,

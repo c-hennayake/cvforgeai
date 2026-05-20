@@ -1,7 +1,12 @@
+using CvForgeAI.Application.Abstractions.Repositories;
 using CvForgeAI.Application.Services.Auth;
+using CvForgeAI.Application.Services.Education;
+using CvForgeAI.Application.Services.Experience;
+using CvForgeAI.Application.Services.Projects;
 using CvForgeAI.Application.Services.Resume;
+using CvForgeAI.Application.Services.Skills;
 using CvForgeAI.Infrastructure.Persistence;
-
+using CvForgeAI.Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -13,7 +18,21 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<IResumeService, ResumeService>();
+builder.Services.AddScoped<IExperienceService, ExperienceService>();
+builder.Services.AddScoped<IEducationService, EducationService>();
 
+builder.Services.AddScoped<ISkillRepository, SkillRepository>();
+
+builder.Services.AddScoped<ISkillService, SkillService>();
+
+builder.Services.AddScoped<IResumeRepository, ResumeRepository>();
+builder.Services.AddScoped<IExperienceRepository, ExperienceRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<IEducationRepository, EducationRepository>();
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+
+builder.Services.AddScoped<IProjectService, ProjectService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
