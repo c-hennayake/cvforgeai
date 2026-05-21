@@ -26,4 +26,7 @@ public class Resume
     public ICollection<Project> Projects { get; set; }
     = new List<Project>();
 
+    public ICollection<Certificate> Certificates { get; set; }
+    = new List<Certificate>();
+
 }
