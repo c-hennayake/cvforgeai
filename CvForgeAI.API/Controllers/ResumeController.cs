@@ -1,4 +1,5 @@
 ﻿using CvForgeAI.Application.DTO.Resume;
+using CvForgeAI.Application.Services.AI;
 using CvForgeAI.Application.Services.Pdf;
 using CvForgeAI.Application.Services.Resume;
 
@@ -16,13 +17,16 @@ public class ResumeController : ControllerBase
 {
     private readonly IResumeService _resumeService;
     private readonly IPdfService _pdfService;
+    private readonly IAIService _aiService;
 
     public ResumeController(
         IResumeService resumeService,
-        IPdfService pdfService)
+        IPdfService pdfService,
+        IAIService aiService)
     {
         _resumeService = resumeService;
         _pdfService = pdfService;
+        _aiService = aiService;
     }
 
     [HttpPost]
@@ -83,5 +87,15 @@ public class ResumeController : ControllerBase
             pdfBytes,
             "application/pdf",
             "resume.pdf");
+    }
+
+    [HttpPost("generate-summary")]
+    public async Task<IActionResult> GenerateSummary(
+        [FromBody] string prompt)
+    {
+        var result = await _aiService
+            .GenerateSummaryAsync(prompt);
+
+        return Ok(result);
     }
 }

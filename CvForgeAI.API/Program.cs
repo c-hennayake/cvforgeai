@@ -1,4 +1,5 @@
 using CvForgeAI.Application.Abstractions.Repositories;
+using CvForgeAI.Application.Services.AI;
 using CvForgeAI.Application.Services.Auth;
 using CvForgeAI.Application.Services.Certificates;
 using CvForgeAI.Application.Services.Education;
@@ -38,6 +39,9 @@ builder.Services.AddScoped<ICertificateRepository, CertificateRepository>();
 builder.Services.AddScoped<ICertificateService, CertificateService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IPdfService, PdfService>();
+builder.Services.AddScoped<IAIService, AIService>();
+
+
 
 
 builder.Services.AddDbContext<AppDbContext>(options =>
