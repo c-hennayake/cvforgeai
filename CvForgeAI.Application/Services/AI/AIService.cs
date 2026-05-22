@@ -1,7 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using CvForgeAI.Application.Common.Models.OpenAI;
+using Microsoft.Extensions.Configuration;
 
 using RestSharp;
-
+using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace CvForgeAI.Application.Services.AI;
@@ -9,10 +10,12 @@ namespace CvForgeAI.Application.Services.AI;
 public class AIService : IAIService
 {
     private readonly IConfiguration _configuration;
+    private readonly HttpClient _httpClient;
 
-    public AIService(IConfiguration configuration)
+    public AIService(IConfiguration configuration ,HttpClient httpClient)
     {
         _configuration = configuration;
+        _httpClient = httpClient;
     }
 
     public async Task<string> GenerateSummaryAsync(
@@ -66,5 +69,38 @@ public class AIService : IAIService
             .GetString();
 
         return text ?? "No response.";
+    }
+
+
+
+    public async Task<string> AnalyzeResumeAsync(
+    string prompt)
+    {
+        var response = await _httpClient
+            .PostAsJsonAsync(
+                "chat/completions",
+                new
+                {
+                    model = "deepseek/deepseek-chat",
+                    messages = new[]
+                    {
+                    new
+                    {
+                        role = "user",
+                        content = prompt
+                    }
+                    }
+                });
+
+        response.EnsureSuccessStatusCode();
+
+        var result = await response
+            .Content
+            .ReadFromJsonAsync<OpenAIResponse>();
+
+        return result!
+            .Choices[0]
+            .Message
+            .Content;
     }
 }

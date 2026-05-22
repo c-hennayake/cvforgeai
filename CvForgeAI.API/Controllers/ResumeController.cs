@@ -98,4 +98,65 @@ public class ResumeController : ControllerBase
 
         return Ok(result);
     }
+
+
+    [HttpPost("{resumeId}/generate-ai-summary")]
+    public async Task<IActionResult> GenerateAiSummary(
+    int resumeId)
+    {
+        var userId = User
+            .FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized("Invalid token.");
+        }
+
+        var result = await _resumeService
+            .GenerateAiSummaryAsync(
+                Guid.Parse(userId),
+                resumeId);
+
+        return Ok(result);
+    }
+
+
+    [HttpPost("{resumeId}/analyze")]
+    public async Task<IActionResult> AnalyzeResume(
+    int resumeId)
+    {
+        var userId = User
+            .FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized("Invalid token.");
+        }
+
+        var result = await _resumeService
+            .AnalyzeResumeAsync(
+                Guid.Parse(userId),
+                resumeId);
+
+        return Ok(result);
+    }
+
+
+    [HttpPost("match-job")]
+    public async Task<IActionResult>
+    MatchJob(
+        JobMatchRequest request)
+    {
+        var userId = Guid.Parse(
+            User.FindFirst(
+                ClaimTypes.NameIdentifier)!
+                .Value);
+
+        var result = await _resumeService
+            .MatchJobAsync(
+                userId,
+                request);
+
+        return Ok(result);
+    }
 }

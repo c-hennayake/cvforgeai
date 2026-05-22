@@ -39,7 +39,16 @@ builder.Services.AddScoped<ICertificateRepository, CertificateRepository>();
 builder.Services.AddScoped<ICertificateService, CertificateService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IPdfService, PdfService>();
-builder.Services.AddScoped<IAIService, AIService>();
+builder.Services.AddHttpClient<IAIService, AIService>(
+    client =>
+    {
+        client.BaseAddress =
+            new Uri("https://openrouter.ai/api/v1/");
+
+        client.DefaultRequestHeaders.Add(
+            "Authorization",
+            $"Bearer {builder.Configuration["OpenRouter:ApiKey"]}");
+    });
 
 
 
