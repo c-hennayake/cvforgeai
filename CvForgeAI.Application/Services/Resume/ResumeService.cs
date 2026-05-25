@@ -1,5 +1,6 @@
 ﻿using CvForgeAI.Application.Abstractions.Repositories;
 using CvForgeAI.Application.DTO.Resume;
+using CvForgeAI.Application.Exceptions;
 using CvForgeAI.Application.Services.AI;
 
 namespace CvForgeAI.Application.Services.Resume;
@@ -70,7 +71,8 @@ public class ResumeService : IResumeService
 
         if (!resumeExists)
         {
-            throw new Exception("Resume not found.");
+            throw new NotFoundException(
+     "Resume not found.");
         }
 
         var resumes = await _resumeRepository
@@ -121,7 +123,8 @@ Experience:
         if (resume == null ||
             resume.UserId != userId)
         {
-            throw new Exception("Resume not found.");
+            throw new NotFoundException(
+     "Resume not found.");
         }
 
         resume.Title = request.Title;
@@ -142,7 +145,8 @@ Experience:
 
         if (!resumeExists)
         {
-            throw new Exception("Resume not found.");
+            throw new NotFoundException(
+    "Resume not found.");
         }
 
         var resumes = await _resumeRepository
@@ -248,7 +252,8 @@ Experience:
 
         if (!resumeExists)
         {
-            throw new Exception("Resume not found.");
+            throw new NotFoundException(
+    "Resume not found.");
         }
 
         var resumes = await _resumeRepository
@@ -319,8 +324,8 @@ IMPORTANT:
 
         if (result == null)
         {
-            throw new Exception(
-                "Failed to analyze job match.");
+            throw new BadRequestException(
+       "Failed to analyze job match.");
         }
 
         return result;

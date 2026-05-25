@@ -1,5 +1,5 @@
 ﻿using CvForgeAI.Application.Abstractions.Repositories;
-
+using CvForgeAI.Application.Exceptions;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -43,7 +43,8 @@ public class PdfService : IPdfService
 
         if (!resumeExists)
         {
-            throw new Exception("Resume not found.");
+            throw new NotFoundException(
+      "Resume not found.");
         }
 
         var resumes = await _resumeRepository

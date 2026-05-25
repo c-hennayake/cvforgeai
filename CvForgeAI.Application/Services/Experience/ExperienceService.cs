@@ -1,5 +1,6 @@
 ﻿using CvForgeAI.Application.Abstractions.Repositories;
 using CvForgeAI.Application.DTO.Experience;
+using CvForgeAI.Application.Exceptions;
 
 namespace CvForgeAI.Application.Services.Experience;
 
@@ -27,7 +28,8 @@ public class ExperienceService : IExperienceService
 
         if (!resumeExists)
         {
-            throw new Exception("Resume not found.");
+            throw new NotFoundException(
+     "Resume not found.");
         }
 
         var experience = new Domain.Entities.Experience

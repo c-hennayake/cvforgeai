@@ -1,3 +1,4 @@
+using CvForgeAI.API.Middleware;
 using CvForgeAI.Application.Abstractions.Repositories;
 using CvForgeAI.Application.Services.AI;
 using CvForgeAI.Application.Services.Auth;
@@ -93,6 +94,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseAuthentication();
 
