@@ -41,4 +41,12 @@ public class ResumeRepository : IResumeRepository
     {
         await _context.SaveChangesAsync();
     }
+
+    public async Task<Domain.Entities.Resume?> GetByIdAsync(
+    int resumeId)
+    {
+        return await _context.Resumes
+            .FirstOrDefaultAsync(x => x.Id == resumeId);
+    }
+
 }

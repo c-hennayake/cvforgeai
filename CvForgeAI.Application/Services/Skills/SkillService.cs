@@ -1,5 +1,6 @@
 ﻿using CvForgeAI.Application.Abstractions.Repositories;
 using CvForgeAI.Application.DTO.Skill;
+using CvForgeAI.Application.Exceptions;
 using CvForgeAI.Domain.Entities;
 
 namespace CvForgeAI.Application.Services.Skills;
@@ -28,7 +29,8 @@ public class SkillService : ISkillService
 
         if (!resumeExists)
         {
-            throw new Exception("Resume not found.");
+            throw new NotFoundException(
+        "Resume not found.");
         }
 
         var skill = new Skill
@@ -62,7 +64,8 @@ public class SkillService : ISkillService
 
         if (!resumeExists)
         {
-            throw new Exception("Resume not found.");
+            throw new NotFoundException(
+     "Resume not found.");
         }
 
         var skills = await _skillRepository

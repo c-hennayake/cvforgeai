@@ -20,6 +20,9 @@ namespace CvForgeAI.Infrastructure.Persistence
         public DbSet<Resume> Resumes => Set<Resume>();
         public DbSet<Project> Projects => Set<Project>();
         public DbSet<Skill> Skills => Set<Skill>();
+        public DbSet<Certificate> Certificates => Set<Certificate>();
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

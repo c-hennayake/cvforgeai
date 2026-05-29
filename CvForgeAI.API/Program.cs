@@ -1,7 +1,11 @@
+using CvForgeAI.API.Middleware;
 using CvForgeAI.Application.Abstractions.Repositories;
+using CvForgeAI.Application.Services.AI;
 using CvForgeAI.Application.Services.Auth;
+using CvForgeAI.Application.Services.Certificates;
 using CvForgeAI.Application.Services.Education;
 using CvForgeAI.Application.Services.Experience;
+using CvForgeAI.Application.Services.Pdf;
 using CvForgeAI.Application.Services.Projects;
 using CvForgeAI.Application.Services.Resume;
 using CvForgeAI.Application.Services.Skills;
@@ -31,8 +35,24 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<IEducationRepository, EducationRepository>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<ICertificateRepository, CertificateRepository>();
 
+builder.Services.AddScoped<ICertificateService, CertificateService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<IPdfService, PdfService>();
+builder.Services.AddHttpClient<IAIService, AIService>(
+    client =>
+    {
+        client.BaseAddress =
+            new Uri("https://openrouter.ai/api/v1/");
+
+        client.DefaultRequestHeaders.Add(
+            "Authorization",
+            $"Bearer {builder.Configuration["OpenRouter:ApiKey"]}");
+    });
+
+
+
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
@@ -74,6 +94,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseAuthentication();
 

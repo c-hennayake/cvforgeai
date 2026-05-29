@@ -14,4 +14,7 @@ public interface IResumeRepository
         Guid userId);
 
     Task SaveChangesAsync();
+
+    Task<Domain.Entities.Resume?> GetByIdAsync(
+    int resumeId);
 }

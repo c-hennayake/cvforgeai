@@ -1,5 +1,6 @@
 ﻿using CvForgeAI.Application.Abstractions.Repositories;
 using CvForgeAI.Application.DTO.Project;
+using CvForgeAI.Application.Exceptions;
 using CvForgeAI.Domain.Entities;
 
 namespace CvForgeAI.Application.Services.Projects;
@@ -68,7 +69,8 @@ public class ProjectService : IProjectService
 
         if (!resumeExists)
         {
-            throw new Exception("Resume not found.");
+            throw new NotFoundException(
+    "Resume not found.");
         }
 
         var projects = await _projectRepository
