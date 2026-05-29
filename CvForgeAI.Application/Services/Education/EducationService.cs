@@ -1,5 +1,6 @@
 ﻿using CvForgeAI.Application.Abstractions.Repositories;
 using CvForgeAI.Application.DTO.Education;
+using CvForgeAI.Application.Exceptions;
 
 namespace CvForgeAI.Application.Services.Education;
 
@@ -27,7 +28,8 @@ public class EducationService : IEducationService
 
         if (!resumeExists)
         {
-            throw new Exception("Resume not found.");
+            throw new NotFoundException(
+    "Resume not found.");
         }
 
         var education = new Domain.Entities.Education
@@ -69,7 +71,8 @@ public class EducationService : IEducationService
 
         if (!resumeExists)
         {
-            throw new Exception("Resume not found.");
+            throw new NotFoundException(
+    "Resume not found.");
         }
 
         var educations = await _educationRepository

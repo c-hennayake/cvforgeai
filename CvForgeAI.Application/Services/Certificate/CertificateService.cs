@@ -1,5 +1,6 @@
 ﻿using CvForgeAI.Application.Abstractions.Repositories;
 using CvForgeAI.Application.DTO.Certificate;
+using CvForgeAI.Application.Exceptions;
 using CvForgeAI.Domain.Entities;
 
 namespace CvForgeAI.Application.Services.Certificates;
@@ -28,7 +29,8 @@ public class CertificateService : ICertificateService
 
         if (!resumeExists)
         {
-            throw new Exception("Resume not found.");
+            throw new NotFoundException(
+     "Resume not found.");
         }
 
         var certificate = new Certificate
@@ -66,7 +68,8 @@ public class CertificateService : ICertificateService
 
         if (!resumeExists)
         {
-            throw new Exception("Resume not found.");
+            throw new NotFoundException(
+     "Resume not found.");
         }
 
         var certificates = await _certificateRepository

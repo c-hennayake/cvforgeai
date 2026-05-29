@@ -71,7 +71,8 @@ public class ExperienceService : IExperienceService
 
         if (!resumeExists)
         {
-            throw new Exception("Resume not found.");
+            throw new NotFoundException(
+      "Resume not found.");
         }
 
         var experiences = await _experienceRepository
